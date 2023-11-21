@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Schedule Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 10px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            margin-top: 10px;
+            display: block;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #predictionResult {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Flight Schedule Prediction</h1>
+        <form id="predictionForm">
+            <label for="departureTime">Departure Time (HH:MM):</label>
+            <input type="text" id="departureTime" name="departureTime" pattern="\d{2}:\d{2}" required title="Enter time in HH:MM format">
+            <!-- Arrival Time / Not Implemented -->
+            <label for="arrivalTime">Arrival Time (HH:MM):</label>
+            <input type="text" id="arrivalTime" name="arrivalTime" pattern="\d{2}:\d{2}" required title="Enter time in HH:MM format">
+
+            <label for="weatherCondition">Weather Condition:</label>
+            <select id="weatherCondition" name="weatherCondition" required>
+                <option value="">--Select Weather Condition--</option>
+                <option value="clear">Clear</option>
+                <option value="rainy">Rainy</option>
+                <option value="stormy">Stormy</option>
+                <option value="foggy">Foggy</option>
+            </select>
+
+            <label for="crewOnStandby">Crew on Standby:</label>
+            <input type="number" id="crewOnStandby" name="crewOnStandby" min="1" required>
+
+            <label for="aircraftType">Aircraft Type:</label>
+            <input type="text" id="aircraftType" name="aircraftType" required>
+
+            <label for="destinationAirport">Destination Airport:</label>
+            <input type="text" id="destinationAirport" name="destinationAirport" required>
+
+            <!-- Departure Airport / Not Implemented -->
+            <label for="departureAirport">Departure Airport:</label>
+            <input type="text" id="departureAirport" name="departureAirport" required>
+
+            <!-- Geography Section / Not Implemented -->
+            <label for="departureCityCode">Departure City Code:</label>
+            <input type="text" id="departureCityCode" name="departureCityCode" maxlength="3" required>
+
+            <!-- Route Section / Not Implemented -->
+            <label for="fullRouting">Full Routing:</label>
+            <input type="text" id="fullRouting" name="fullRouting" maxlength="12" required>
+
+            <!-- Equipment Section / Not Implemented -->
+            <label for="generalEquipmentType">General Equipment Type:</label>
+            <input type="text" id="generalEquipmentType" name="generalEquipmentType" maxlength="3" required>
+
+            <!-- Supplementary Section / Not Implemented -->
+            <label for="elapsedJourneyTime">Elapsed Journey Time:</label>
+            <input type="text" id="elapsedJourneyTime" name="elapsedJourneyTime" maxlength="5" required>
+
+            <!-- Metadata Section / Not Implemented -->
+            <label for="scheduleFingerprint">Schedule Fingerprint:</label>
+            <input type="text" id="scheduleFingerprint" name="scheduleFingerprint" maxlength="64" required>
+
+            <!-- Capacity Section / Not Implemented -->
+            <label for="passengerClasses">Passenger Classes:</label>
+            <input type="text" id="passengerClasses" name="passengerClasses" maxlength="52" required>
+
+            <button type="submit">Predict</button>
+        </form>
+
+        <div id="predictionResult"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
