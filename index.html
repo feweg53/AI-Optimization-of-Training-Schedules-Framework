@@ -96,19 +96,35 @@
         }
         .container {
             animation: fadeIn 0.6s;
+            flex: 1; /* Flex-grow to take equal width */
+            margin: 0 10px; /* Add margin for spacing between containers */
+        }
+
+        /* Flex container to hold both the form and chart */
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch; /* Align items to stretch to full container height */
+            flex-wrap: wrap;
+            margin: 20px 0;
         }
         
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
-                width: 90%;
-                padding: 10px;
+                margin: 10px 0; /* Adjust margin for vertical layout */
+                width: 90%; /* Adjust width for smaller screens */
             }
             .row {
                 flex-direction: column;
             }
             #chartContainer {
                 width: 100%;
+            }
+
+            .flex-container {
+                flex-direction: column;
+                align-items: center;
             }
         }
 
@@ -205,6 +221,7 @@
     </style>
 </head>
 <body>
+    <div class="flex-container">
     <div class="container">
         <h1>Flight Schedule Prediction</h1>
         <form id="predictionForm">
@@ -320,6 +337,7 @@
             <h3>Pie Chart</h3>
             <canvas id="pieChart"></canvas>
         </div>
+    </div>
     </div>
 
     <script src="script.js"></script>
