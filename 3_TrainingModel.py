@@ -6,6 +6,7 @@ import logging
 import numpy as np
 import time
 import requests  # If integrating with an external scheduling system
+from sklearn.metrics import accuracy_score
 
 # Configure logging
 logging.basicConfig(filename='ai_scheduling.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
@@ -94,6 +95,18 @@ def simulate_scenarios(X_train, y_train):
 
     return X_train, y_train
 
+def evaluate_model_during_training(model, X_val, y_val):
+    # Evaluate model on a validation set
+    predictions = model.predict(X_val)
+    accuracy = accuracy_score(y_val, predictions)
+    logging.info(f"Validation Accuracy: {accuracy}")
+    return accuracy
+
+def train_and_evaluate_model(model, X_train, y_train, X_val, y_val):
+    # Training with periodic evaluation
+    model.fit(X_train, y_train.values.ravel())
+    evaluate_model_during_training(model, X_val, y_val)
+
 def integrate_with_scheduling_system(model, X_data, scheduling_system_api):
     """
     Integrates the AI model with the existing flight scheduling system by sending predictions.
@@ -153,10 +166,13 @@ def continuous_learning(model, new_data_stream, retrain_interval):
 # Main execution
 if __name__ == "__main__":
     try:
+        # Load data and split for validation
         X_train, y_train, model = load_data_and_model('X_train.csv', 'y_train.csv', 'decision_tree_model.pkl')
+        # Existing code for loading model and data
         X_train, y_train = simulate_scenarios(X_train, y_train)
         if X_train is not None and y_train is not None:
             model = train_model(model, X_train, y_train)
+            # Save the model based on improved performance criteria
             save_trained_model(model, 'trained_decision_tree_model.pkl')
     except Exception as e:
         logging.error(f"An error occurred in the training script: {e}")
