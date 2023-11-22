@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }]
         },
         options: {
-            responsive: false, //Careful! Making it true will likely cost an error!
+            responsive: false, // True = Error!
             maintainAspectRatio: false
         }
     });
