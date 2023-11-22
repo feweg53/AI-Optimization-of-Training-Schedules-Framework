@@ -6,341 +6,130 @@
     <title>Flight Schedule Prediction</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #eaeaea;
-            padding: 10px;
-            text-align: center;
-        }
-        .container {
-            max-width: 800px;
-            margin: 30px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .form-container, .chart-container {
-            margin-bottom: 40px;
-        }
-        .row {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            text-align: left;
-        }
-        input, select {
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-        }
-        button {
-            padding: 10px;
-            background-color: #0056b3;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #004494;
-        }
-        .prediction-chart {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        #predictionChart {
-            max-height: 400px;
-        }
-        #predictionResult {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #e9ecef;
-            border: 1px solid #ddd;
-        }
-        #chartContainer {
-            width: 75%;
-            margin: 30px auto;
-        }
-        canvas {
-            width: 100% !important;
-            max-width: 700px;
-            height: auto !important;
-        }
-                /* Interactive Elements */
-        input:focus, select:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-        input:hover, select:hover, button:hover {
-            border-color: #007bff;
-        }
-        
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .container {
-            animation: fadeIn 0.6s;
-            flex: 1; /* Flex-grow to take equal width */
-            margin: 0 10px; /* Add margin for spacing between containers */
-        }
-
-        /* Flex container to hold both the form and chart */
-        .flex-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: stretch; /* Align items to stretch to full container height */
-            flex-wrap: wrap;
-            margin: 20px 0;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px 0; /* Adjust margin for vertical layout */
-                width: 90%; /* Adjust width for smaller screens */
-            }
-            .row {
-                flex-direction: column;
-            }
-            #chartContainer {
-                width: 100%;
-            }
-
-            .flex-container {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-
-        /* Additional Styling for Tooltip */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 120px;
-            background-color: #555;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -60px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* Interactive Elements */
-        input:focus, select:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-        input:hover, select:hover, button:hover {
-            border-color: #007bff;
-        }
-        
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .container {
-            animation: fadeIn 0.6s;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                width: 90%;
-                padding: 10px;
-            }
-            .row {
-                flex-direction: column;
-            }
-            #chartContainer {
-                width: 100%;
-            }
-        }
-
-        /* Additional Styling for Tooltip */
-        .tooltip {
-            flex: 1;
-            margin-right: 10px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 120px;
-            background-color: #555;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -60px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .tooltip:last-child {
-            margin-right: 0;
-        }
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="flex-container">
-    <div class="container">
-        <h1>Flight Schedule Prediction</h1>
-        <form id="predictionForm">
-            <!-- Departure Date and Time with Tooltip -->
-            <div class="row">
-                <div class="tooltip">
-                    <label for="departureDate">Departure Date (YYYY-MM-DD):</label>
-                    <input type="date" id="departureDate" name="departureDate" required>
-                    <span class="tooltiptext">Enter the departure date and time in Zulu format.</span>
+        <div class="container">
+            <h1>Flight Schedule Prediction</h1>
+            <form id="predictionForm">
+                <!-- Departure Date and Time with Tooltip -->
+                <div class="row">
+                    <div class="tooltip">
+                        <label for="departureDate">Departure Date (YYYY-MM-DD):</label>
+                        <input type="date" id="departureDate" name="departureDate" required>
+                        <span class="tooltiptext">Enter the departure date and time in Zulu format.</span>
+                    </div>
+                    <div class="tooltip">
+                        <label for="departureTime">Departure Time (HH:MM Zulu):</label>
+                        <input type="time" id="departureTime" name="departureTime" required>
+                        <span class="tooltiptext">Enter the departure date and time in Zulu format.</span>
+                    </div>
                 </div>
-                <div class="tooltip">
-                    <label for="departureTime">Departure Time (HH:MM Zulu):</label>
-                    <input type="time" id="departureTime" name="departureTime" required>
-                    <span class="tooltiptext">Enter the departure date and time in Zulu format.</span>
+
+                <!-- Arrival Date and Time with Tooltip -->
+                <div class="row">
+                    <div class="tooltip">
+                        <label for="arrivalDate">Arrival Date (YYYY-MM-DD):</label>
+                        <input type="date" id="arrivalDate" name="arrivalDate" required>
+                        <span class="tooltiptext">Enter the arrival date and time in Zulu format.</span>
+                    </div>
+                    <div class="tooltip">
+                        <label for="arrivalTime">Arrival Time (HH:MM Zulu):</label>
+                        <input type="time" id="arrivalTime" name="arrivalTime" required>
+                        <span class="tooltiptext">Enter the arrival date and time in Zulu format.</span>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Arrival Date and Time with Tooltip -->
-            <div class="row">
-                <div class="tooltip">
-                    <label for="arrivalDate">Arrival Date (YYYY-MM-DD):</label>
-                    <input type="date" id="arrivalDate" name="arrivalDate" required>
-                    <span class="tooltiptext">Enter the arrival date and time in Zulu format.</span>
+                <div class="row">
+                    <label for="weatherCondition">Weather Condition:</label>
+                    <select id="weatherCondition" name="weatherCondition" required>
+                        <option value="">--Select Weather Condition--</option>
+                        <option value="clear">Clear</option>
+                        <option value="rainy">Rainy</option>
+                        <option value="stormy">Stormy</option>
+                        <option value="foggy">Foggy</option>
+                    </select>
                 </div>
-                <div class="tooltip">
-                    <label for="arrivalTime">Arrival Time (HH:MM Zulu):</label>
-                    <input type="time" id="arrivalTime" name="arrivalTime" required>
-                    <span class="tooltiptext">Enter the arrival date and time in Zulu format.</span>
+
+                <div class="row">
+                    <label for="crewOnStandby">Crew on Standby:</label>
+                    <input type="number" id="crewOnStandby" name="crewOnStandby" min="1" max="10" required>
                 </div>
-            </div>
 
-            <div class="row">
-                <label for="weatherCondition">Weather Condition:</label>
-                <select id="weatherCondition" name="weatherCondition" required>
-                    <option value="">--Select Weather Condition--</option>
-                    <option value="clear">Clear</option>
-                    <option value="rainy">Rainy</option>
-                    <option value="stormy">Stormy</option>
-                    <option value="foggy">Foggy</option>
-                </select>
-            </div>
+                <div class="row">
+                    <label for="aircraftType">Aircraft Type (e.g., A320):</label>
+                    <input type="text" id="aircraftType" name="aircraftType" pattern="^[A-Z0-9]{2,4}$" required title="Enter a valid aircraft type (e.g., A320)">
+                </div>
 
-            <div class="row">
-                <label for="crewOnStandby">Crew on Standby:</label>
-                <input type="number" id="crewOnStandby" name="crewOnStandby" min="1" max="10" required>
-            </div>
+                <div class="row">
+                    <label for="destinationAirport">Destination Airport:</label>
+                    <input type="text" id="destinationAirport" name="destinationAirport" required>
+                </div>
 
-            <div class="row">
-                <label for="aircraftType">Aircraft Type (e.g., A320):</label>
-                <input type="text" id="aircraftType" name="aircraftType" pattern="^[A-Z0-9]{2,4}$" required title="Enter a valid aircraft type (e.g., A320)">
-            </div>
+                <div class="row">
+                    <label for="departureAirport">Departure Airport:</label>
+                    <input type="text" id="departureAirport" name="departureAirport" required>
+                </div>
 
-            <div class="row">
-                <label for="destinationAirport">Destination Airport:</label>
-                <input type="text" id="destinationAirport" name="destinationAirport" required>
-            </div>
+                <div class="row">
+                    <label for="departureCityCode">Departure City Code:</label>
+                    <input type="text" id="departureCityCode" name="departureCityCode" required>
+                </div>
 
-            <div class="row">
-                <label for="departureAirport">Departure Airport:</label>
-                <input type="text" id="departureAirport" name="departureAirport" required>
-            </div>
+                <div class="row">
+                    <label for="fullRouting">Full Routing:</label>
+                    <input type="text" id="fullRouting" name="fullRouting" required>
+                </div>
 
-            <div class="row">
-                <label for="departureCityCode">Departure City Code:</label>
-                <input type="text" id="departureCityCode" name="departureCityCode" required>
-            </div>
+                <div class="row">
+                    <label for="generalEquipmentType">General Equipment Type:</label>
+                    <input type="text" id="generalEquipmentType" name="generalEquipmentType" required>
+                </div>
 
-            <div class="row">
-                <label for="fullRouting">Full Routing:</label>
-                <input type="text" id="fullRouting" name="fullRouting" required>
-            </div>
+                <div class="row">
+                    <label for="elapsedJourneyTime">Elapsed Journey Time:</label>
+                    <input type="text" id="elapsedJourneyTime" name="elapsedJourneyTime" required>
+                </div>
 
-            <div class="row">
-                <label for="generalEquipmentType">General Equipment Type:</label>
-                <input type="text" id="generalEquipmentType" name="generalEquipmentType" required>
-            </div>
+                <div class="row">
+                    <label for="scheduleFingerprint">Schedule Fingerprint:</label>
+                    <input type="text" id="scheduleFingerprint" name="scheduleFingerprint" required>
+                </div>
 
-            <div class="row">
-                <label for="elapsedJourneyTime">Elapsed Journey Time:</label>
-                <input type="text" id="elapsedJourneyTime" name="elapsedJourneyTime" required>
-            </div>
+                <div class="row">
+                    <label for="passengerClasses">Passenger Classes:</label>
+                    <input type="text" id="passengerClasses" name="passengerClasses" required>
+                </div>
+                    
+                <div class="row">
+                    <button type="submit">Predict</button>
+                </div>
+            </form>
 
-            <div class="row">
-                <label for="scheduleFingerprint">Schedule Fingerprint:</label>
-                <input type="text" id="scheduleFingerprint" name="scheduleFingerprint" required>
-            </div>
-
-            <div class="row">
-                <label for="passengerClasses">Passenger Classes:</label>
-                <input type="text" id="passengerClasses" name="passengerClasses" required>
-            </div>
-                
-            <div class="row">
-                <button type="submit">Predict</button>
-            </div>
-        </form>
-
-        <div id="predictionResult"></div>
-    </div>
-
-    <!-- Chart Container -->
-    <div class="container chart-container">
-        <h2>Prediction Analysis</h2>
-        <div class="prediction-chart">
-            <h3>Bar Chart</h3>
-            <canvas id="barChart"></canvas>
+            <div id="predictionResult"></div>
         </div>
-        <div class="prediction-chart">
-            <h3>Line Chart</h3>
-            <canvas id="lineChart"></canvas>
+
+        <!-- Chart Container -->
+        <div class="container chart-container">
+            <h2>Prediction Analysis</h2>
+            <div class="prediction-chart">
+                <h3>Bar Chart</h3>
+                <canvas id="barChart"></canvas>
+            </div>
+            <div class="prediction-chart">
+                <h3>Line Chart</h3>
+                <canvas id="lineChart"></canvas>
+            </div>
+            <div class="prediction-chart">
+                <h3>Pie Chart</h3>
+                <canvas id="pieChart"></canvas>
+            </div>
         </div>
-        <div class="prediction-chart">
-            <h3>Pie Chart</h3>
-            <canvas id="pieChart"></canvas>
-        </div>
-    </div>
     </div>
 
     <script src="script.js"></script>
 
 </body>
 </html>
+
