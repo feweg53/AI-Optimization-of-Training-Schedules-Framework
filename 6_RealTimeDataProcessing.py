@@ -5,6 +5,7 @@ import time
 import json
 import logging
 import pandas as pd
+import joblib
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 
 # Configure logging
@@ -19,12 +20,16 @@ def fetch_realtime_data(source_url):
     """
     try:
         response = requests.get(source_url)
-        data = response.json()
-        logging.info("Real-time data fetched successfully.")
-        return data
+        if response.status_code == 200:
+            data = response.json()
+            logging.info("Real-time data fetched successfully.")
+            return data
+        else:
+            logging.error(f"Failed to fetch data. Status Code: {response.status_code}")
+            return None
     except Exception as e:
-        logging.error(f"Error fetching real-time data: {e}")
-        return None
+            logging.error(f"Error fetching real-time data: {e}")
+            return None
 
 def process_data(data):
     """
@@ -33,21 +38,27 @@ def process_data(data):
     :param data: The real-time data to be processed.
     :return: Processed data.
     """
+    df = pd.DataFrame([data])
+
     # Convert relevant columns to datetime
-    data['scheduled_departure_time'] = pd.to_datetime(data['scheduled_departure_time'])
-    data['scheduled_arrival_time'] = pd.to_datetime(data['scheduled_arrival_time'])
+    df['scheduled_departure_time'] = pd.to_datetime(df['scheduled_departure_time'])
+    df['scheduled_arrival_time'] = pd.to_datetime(df['scheduled_arrival_time'])
 
     # Extract features used by the model
-    data['scheduled_departure_hour'] = data['scheduled_departure_time'].dt.hour
-    data['scheduled_arrival_hour'] = data['scheduled_arrival_time'].dt.hour
+    df['scheduled_departure_hour'] = df['scheduled_departure_time'].dt.hour
+    df['scheduled_arrival_hour'] = df['scheduled_arrival_time'].dt.hour
 
-    # Encode categorical variables and scale numerical columns as per model requirements
+    # Encode and scale as per model's preprocessing requirements
+    # Note: Use saved LabelEncoder and Scaler objects from the training phase
+    # For simplicity, using fit_transform here
     label_encoder = LabelEncoder()
     scaler = MinMaxScaler()
-    data['weather_condition_encoded'] = label_encoder.fit_transform(data['weather_condition'])
-    data[['scheduled_departure_hour', 'scheduled_arrival_hour']] = scaler.fit_transform(data[['scheduled_departure_hour', 'scheduled_arrival_hour']])
-    
-    return data
+    df['weather_condition_encoded'] = label_encoder.fit_transform(df['weather_condition'])
+    df[['scheduled_departure_hour', 'scheduled_arrival_hour']] = scaler.fit_transform(df[['scheduled_departure_hour', 'scheduled_arrival_hour']])
+
+    # Selecting the columns used by the model
+    model_cols = ['weather_condition_encoded', 'scheduled_departure_hour', 'scheduled_arrival_hour']
+    return df[model_cols]
 
 def send_to_scheduling_system(processed_data, scheduling_system_endpoint):
     """
@@ -76,26 +87,10 @@ def main(model_path, source_url, scheduling_system_endpoint):
         # Fetch and process real-time data
         data = fetch_realtime_data(source_url)
         if data:
-            processed_data = preprocess_realtime_data(data)
+            processed_data = preprocess_realtime_data(data, model)
             send_to_scheduling_system(processed_data, scheduling_system_endpoint, model)
 
         # Fetch new data at regular intervals (e.g., every 10 seconds)
-        time.sleep(10)
-
-def main():
-    source_url = 'http://realtime_data_source_url'
-    scheduling_system_endpoint = 'http://scheduling_system_endpoint'
-
-    while True:
-        # Fetch real-time data
-        data = fetch_realtime_data(source_url)
-        if data:
-            # Process the data
-            processed_data = process_data(data)
-            # Send processed data to scheduling system
-            send_to_scheduling_system(processed_data, scheduling_system_endpoint)
-
-        # Example: Fetch new data every 10 seconds
         time.sleep(10)
 
 if __name__ == '__main__':
