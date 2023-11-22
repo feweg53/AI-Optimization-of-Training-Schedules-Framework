@@ -4,60 +4,203 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flight Schedule Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #eaeaea;
             padding: 10px;
             text-align: center;
         }
         .container {
-            max-width: 600px;
-            margin: auto;
+            max-width: 800px;
+            margin: 30px auto;
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .form-container, .chart-container {
+            margin-bottom: 40px;
+        }
+        .row {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
         }
         label {
-            margin-top: 10px;
             display: block;
+            margin-bottom: 5px;
             font-weight: bold;
+            text-align: left;
         }
         input, select {
-            width: 100%;
             padding: 8px;
-            margin-top: 5px;
             border-radius: 4px;
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
+            font-size: 14px;
         }
         button {
-            width: 100%;
             padding: 10px;
-            background-color: #007bff;
+            background-color: #0056b3;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            margin-top: 20px;
+            font-size: 16px;
+            transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #004494;
+        }
+        .prediction-chart {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #predictionChart {
+            max-height: 400px;
         }
         #predictionResult {
             margin-top: 20px;
             padding: 10px;
-            border-radius: 4px;
-            background-color: #f8f8f8;
+            border-radius: 5px;
+            background-color: #e9ecef;
             border: 1px solid #ddd;
         }
-        .row {
-            margin-bottom: 15px;
+        #chartContainer {
+            width: 75%;
+            margin: 30px auto;
         }
-        .row label {
-            display: block;
-            margin-bottom: 5px;
+        canvas {
+            width: 100% !important;
+            max-width: 700px;
+            height: auto !important;
+        }
+                /* Interactive Elements */
+        input:focus, select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        input:hover, select:hover, button:hover {
+            border-color: #007bff;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .container {
+            animation: fadeIn 0.6s;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 10px;
+            }
+            .row {
+                flex-direction: column;
+            }
+            #chartContainer {
+                width: 100%;
+            }
+        }
+
+        /* Additional Styling for Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Interactive Elements */
+        input:focus, select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        input:hover, select:hover, button:hover {
+            border-color: #007bff;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .container {
+            animation: fadeIn 0.6s;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 10px;
+            }
+            .row {
+                flex-direction: column;
+            }
+            #chartContainer {
+                width: 100%;
+            }
+        }
+
+        /* Additional Styling for Tooltip */
+        .tooltip {
+            flex: 1;
+            margin-right: 10px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:last-child {
+            margin-right: 0;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
         }
     </style>
 </head>
@@ -65,13 +208,32 @@
     <div class="container">
         <h1>Flight Schedule Prediction</h1>
         <form id="predictionForm">
+            <!-- Departure Date and Time with Tooltip -->
             <div class="row">
-                <label for="departureTime">Departure Time (HH:MM):</label>
-                <input type="text" id="departureTime" name="departureTime" pattern="^(2[0-3]|[01][0-9]):[0-5][0-9]$" required title="Enter time in HH:MM format (24-hour clock)">
+                <div class="tooltip">
+                    <label for="departureDate">Departure Date (YYYY-MM-DD):</label>
+                    <input type="date" id="departureDate" name="departureDate" required>
+                    <span class="tooltiptext">Enter the departure date and time in Zulu format.</span>
+                </div>
+                <div class="tooltip">
+                    <label for="departureTime">Departure Time (HH:MM Zulu):</label>
+                    <input type="time" id="departureTime" name="departureTime" required>
+                    <span class="tooltiptext">Enter the departure date and time in Zulu format.</span>
+                </div>
             </div>
+
+            <!-- Arrival Date and Time with Tooltip -->
             <div class="row">
-                <label for="arrivalTime">Arrival Time (HH:MM):</label>
-                <input type="text" id="arrivalTime" name="arrivalTime" pattern="^(2[0-3]|[01][0-9]):[0-5][0-9]$" required title="Enter time in HH:MM format (24-hour clock)">
+                <div class="tooltip">
+                    <label for="arrivalDate">Arrival Date (YYYY-MM-DD):</label>
+                    <input type="date" id="arrivalDate" name="arrivalDate" required>
+                    <span class="tooltiptext">Enter the arrival date and time in Zulu format.</span>
+                </div>
+                <div class="tooltip">
+                    <label for="arrivalTime">Arrival Time (HH:MM Zulu):</label>
+                    <input type="time" id="arrivalTime" name="arrivalTime" required>
+                    <span class="tooltiptext">Enter the arrival date and time in Zulu format.</span>
+                </div>
             </div>
 
             <div class="row">
@@ -143,9 +305,21 @@
         <div id="predictionResult"></div>
     </div>
 
-    
-    <div id="chartContainer" style="width: 75%; margin: 20px auto;">
-        <canvas id="predictionChart"></canvas>
+    <!-- Chart Container -->
+    <div class="container chart-container">
+        <h2>Prediction Analysis</h2>
+        <div class="prediction-chart">
+            <h3>Bar Chart</h3>
+            <canvas id="barChart"></canvas>
+        </div>
+        <div class="prediction-chart">
+            <h3>Line Chart</h3>
+            <canvas id="lineChart"></canvas>
+        </div>
+        <div class="prediction-chart">
+            <h3>Pie Chart</h3>
+            <canvas id="pieChart"></canvas>
+        </div>
     </div>
 
     <script src="script.js"></script>
