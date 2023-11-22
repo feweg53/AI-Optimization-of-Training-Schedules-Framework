@@ -44,33 +44,74 @@ document.getElementById("predictionForm").addEventListener("submit", function(ev
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-    const ctx = document.getElementById('predictionChart').getContext('2d');
-    const predictionChart = new Chart(ctx, {
+    // Generate sample data for demonstration
+    const sampleLabels = Array.from({length: 50}, (_, i) => `Data ${i+1}`);
+    const sampleData = Array.from({length: 50}, () => Math.floor(Math.random() * 100));
+
+    // Summarize data for pie chart
+    const pieData = [sampleData.slice(0, 8).reduce((a, b) => a + b, 0),
+                     sampleData.slice(8, 16).reduce((a, b) => a + b, 0),
+                     sampleData.slice(16).reduce((a, b) => a + b, 0)];
+
+    // Bar Chart
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    const barChart = new Chart(barCtx, {
         type: 'bar',
         data: {
-            labels: ['Flight 1', 'Flight 2', 'Flight 3'], // Replace with dynamic labels
+            labels: sampleLabels,
             datasets: [{
-                label: 'Predicted Delay in Minutes',
-                data: [12, 19, 3], // Replace with dynamic data
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(75, 192, 192, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(75, 192, 192, 1)'
-                ],
+                label: 'Bar Dataset',
+                data: sampleData,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
             }]
         },
         options: {
             scales: {
-                y: {
-                    beginAtZero: true
-                }
+                yAxes: [{ ticks: { beginAtZero: true } }]
             }
+        }
+    });
+
+    // Line Chart
+    const lineCtx = document.getElementById('lineChart').getContext('2d');
+    const lineChart = new Chart(lineCtx, {
+        type: 'line',
+        data: {
+            labels: sampleLabels,
+            datasets: [{
+                label: 'Line Dataset',
+                data: sampleData,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{ ticks: { beginAtZero: true } }]
+            }
+        }
+    });
+
+    // Pie Chart
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    const pieChart = new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Early', 'On Time', 'Late'],
+            datasets: [{
+                label: 'Pie Dataset',
+                data: pieData,
+                backgroundColor: ['rgba(75, 192, 192, 0.5)', 'rgba(255, 205, 86, 0.5)', 'rgba(255, 99, 132, 0.5)'],
+                borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 205, 86, 1)', 'rgba(255, 99, 132, 1)'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: false, //Careful! Making it true will likely cost an error!
+            maintainAspectRatio: false
         }
     });
 });
