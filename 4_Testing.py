@@ -154,14 +154,9 @@ def evaluate_model(y_test, y_pred):
     :param y_pred: Predicted labels of the test set.
     :return: Dictionary containing accuracy and classification report.
     """
-    try:
-        accuracy = accuracy_score(y_test, y_pred)
-        report = classification_report(y_test, y_pred)
-        logging.info("Model evaluation completed successfully.")
-        return {"accuracy": accuracy, "report": report}
-    except Exception as e:
-        logging.error(f"Error during model evaluation: {e}")
-        return None
+    accuracy = accuracy_score(y_test, y_pred)
+    report = classification_report(y_test, y_pred)
+    return {"accuracy": accuracy, "report": report}
 
 def perform_predictions(model, X_test):
     """
@@ -171,13 +166,8 @@ def perform_predictions(model, X_test):
     :param X_test: Test features.
     :return: Predictions array.
     """
-    try:
-        predictions = model.predict(X_test)
-        logging.info("Predictions performed successfully.")
-        return predictions
-    except Exception as e:
-        logging.error(f"Error during predictions: {e}")
-        return None
+    predictions = model.predict(X_test)
+    return predictions
 
 def generate_explanation(model, data_point):
     """
@@ -187,10 +177,33 @@ def generate_explanation(model, data_point):
     :param data_point: The data point for which an explanation is needed.
     :return: Explanation of the model's decision.
     """
-    
     explainer = shap.TreeExplainer(model)
     shap_values = explainer.shap_values(data_point)
     return shap.force_plot(explainer.expected_value, shap_values, data_point)
+
+def load_test_data_and_model(X_test_path, y_test_path, model_path):
+    """
+    Loads test data and a pre-trained model from specified file paths.
+
+    :param X_test_path: Path to the test features file.
+    :param y_test_path: Path to the test labels file.
+    :param model_path: Path to the saved pre-trained model file.
+    :return: Tuple of test features, labels, and the model, or (None, None, None) if an error occurs.
+    """
+    try:
+        # Loading test features and labels
+        X_test = pd.read_csv(X_test_path)
+        y_test = pd.read_csv(y_test_path)
+        logging.info("Test data loaded successfully.")
+
+        # Loading the model
+        model = joblib.load(model_path)
+        logging.info("Model loaded successfully.")
+
+        return X_test, y_test, model
+    except Exception as e:
+        logging.error(f"Error loading test data or model: {e}")
+        return None, None, None
 
 # Main execution
 if __name__ == "__main__":
@@ -198,33 +211,31 @@ if __name__ == "__main__":
         # Load test data and model
         X_test, y_test, model = load_test_data_and_model('X_test.csv', 'y_test.csv', 'optimized_random_forest_model.pkl')
 
-        # Perform predictions - called once
+        # Perform predictions
         y_pred = perform_predictions(model, X_test)
 
-        if y_pred is not None:
-            # Evaluate model under different scenarios
-            scenario_results = evaluate_under_scenarios(model, X_test, y_test)
-            print(f"Scenario Evaluation Results: {scenario_results}")
+        # Evaluate model under different scenarios
+        scenario_results = evaluate_under_scenarios(model, X_test, y_test)
+        print(f"Scenario Evaluation Results: {scenario_results}")
 
-            # Evaluate model accuracy and classification report
-            evaluation_results = evaluate_model(y_test, y_pred)
-            print(f"Model Accuracy: {evaluation_results['accuracy']}")
-            print(f"Classification Report:\n{evaluation_results['report']}")
+        # Evaluate overall model accuracy and classification report
+        evaluation_results = evaluate_model(y_test, y_pred)
+        print(f"Model Accuracy: {evaluation_results['accuracy']}")
+        print(f"Classification Report:\n{evaluation_results['report']}")
 
-            # Error Analysis
-            perform_error_analysis(model, X_test, y_test, y_pred)
+        # Error Analysis
+        perform_error_analysis(model, X_test, y_test, y_pred)
 
-            # Visualization of model performance
-            visualize_model_performance(y_test, y_pred)
+        # Visualization of model performance
+        visualize_model_performance(y_test, y_pred)
 
-            # Model Diagnostics
-            diagnostics = automated_model_diagnostics(model, X_test, y_test)
-            print(f"Model Diagnostics: {diagnostics}")
+        # Model Diagnostics
+        diagnostics = automated_model_diagnostics(model, X_test, y_test)
+        print(f"Model Diagnostics: {diagnostics}")
 
-            # Model explanation for a sample
-            sample_data_point = X_test.iloc[0:5]  # Sample data points for explanation
-            explanation = generate_explanation(model, sample_data_point)
-            print(f"Model Explanation: {explanation}")
-
+        # Model explanation for a sample
+        sample_data_point = X_test.iloc[0:5]  # Sample data points for explanation
+        explanation = generate_explanation(model, sample_data_point)
+        print(f"Model Explanation: {explanation}")
     except Exception as e:
-        logging.error(f"An error occurred: {e}")
+            logging.error(f"An error occurred: {e}")
