@@ -4,6 +4,8 @@ import pandas as pd
 import joblib
 import logging
 import numpy as np
+import time
+import requests  # If integrating with an external scheduling system
 
 # Configure logging
 logging.basicConfig(filename='ai_scheduling.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
@@ -79,14 +81,18 @@ def simulate_scenarios(X_train, y_train):
         simulated_data = X_train[random_indices, :]
 
         # Apply some modifications to simulate scenarios
-        # Example: Adjust 'departure_hour' to simulate time of day changes
-        simulated_data[:, X_train.columns.get_loc('departure_hour')] = np.random.choice(range(24), size=simulated_data.shape[0])
+        # Example: Randomly adjust 'departure_hour' and 'arrival_hour'
+        for _ in range(100):  # Number of scenarios
+            indices = np.random.choice(X_train.index, size=int(len(X_train) * 0.1), replace=False)
+            X_scenario = X_train.loc[indices].copy()
+            X_scenario['scheduled_departure_hour'] = np.random.choice(range(24), size=len(indices))
+            X_scenario['scheduled_arrival_hour'] = (X_scenario['scheduled_departure_hour'] + np.random.choice(range(1, 5), size=len(indices))) % 24
 
-        # Add the simulated data to the training set
-        X_train_simulated = np.vstack([X_train_simulated, simulated_data])
-        y_train_simulated = np.concatenate([y_train_simulated, y_train[random_indices]])
+        # Append simulated data to the training set
+        X_train = pd.concat([X_train, X_scenario])
+        y_train = pd.concat([y_train, y_train.loc[indices]])
 
-    return X_train_simulated, y_train_simulated
+    return X_train, y_train
 
 def integrate_with_scheduling_system(model, X_data, scheduling_system_api):
     """
@@ -149,7 +155,7 @@ if __name__ == "__main__":
     try:
         X_train, y_train, model = load_data_and_model('X_train.csv', 'y_train.csv', 'decision_tree_model.pkl')
         X_train, y_train = simulate_scenarios(X_train, y_train)
-        if X_train is not None and y_train is not None and model is not None:
+        if X_train is not None and y_train is not None:
             model = train_model(model, X_train, y_train)
             save_trained_model(model, 'trained_decision_tree_model.pkl')
     except Exception as e:
