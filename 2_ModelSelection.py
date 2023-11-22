@@ -54,7 +54,9 @@ def perform_hyperparameter_tuning(model, param_grid, X_train, y_train):
     :param y_train: Training labels.
     :return: Model with the best parameters from GridSearchCV.
     """
-    grid_search = GridSearchCV(model, param_grid, cv=5)
+    # The GridSearchCV is set to use n_jobs=-1 to utilize all available CPU cores for faster execution.
+    # Added verbose=1 to GridSearchCV for more detailed output during the model training process.
+    grid_search = GridSearchCV(model, param_grid, cv=5, n_jobs=-1, verbose=1)
     grid_search.fit(X_train, y_train.values.ravel())
     logging.info(f"Best parameters: {grid_search.best_params_}")
     return grid_search.best_estimator_
@@ -77,12 +79,18 @@ if __name__ == "__main__":
     try:
         X_train, y_train = load_training_data('X_train.csv', 'y_train.csv')
         if X_train is not None and y_train is not None:
-            # Model initialization
-            model = initialize_model('random_forest')  # Example: Change to 'random_forest'
+            # Model initialization with RandomForest
+            model = initialize_model('random_forest')
+            # Define hyperparameter grid
+            param_grid = {
+                'n_estimators': [100, 200, 300],
+                'max_depth': [None, 10, 20, 30],
+                'min_samples_split': [2, 5, 10],
+                'min_samples_leaf': [1, 2, 4]
+            }
             # Hyperparameter tuning
-            param_grid = {'n_estimators': [100, 200], 'max_depth': [3, 5, 10]}  # Adjusted for RandomForest
             model = perform_hyperparameter_tuning(model, param_grid, X_train, y_train)
-            # Save the tuned model
-            save_model(model, 'random_forest_model.pkl')  # Adjusted filename
+            # Save the best model
+            save_model(model, 'optimized_random_forest_model.pkl')
     except Exception as e:
         logging.error(f"An error occurred in model selection: {e}")
