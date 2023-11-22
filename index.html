@@ -59,7 +59,6 @@
         <form id="predictionForm">
             <label for="departureTime">Departure Time (HH:MM):</label>
             <input type="text" id="departureTime" name="departureTime" pattern="\d{2}:\d{2}" required title="Enter time in HH:MM format">
-            <!-- Arrival Time / Not Implemented -->
             <label for="arrivalTime">Arrival Time (HH:MM):</label>
             <input type="text" id="arrivalTime" name="arrivalTime" pattern="\d{2}:\d{2}" required title="Enter time in HH:MM format">
 
@@ -81,33 +80,26 @@
             <label for="destinationAirport">Destination Airport:</label>
             <input type="text" id="destinationAirport" name="destinationAirport" required>
 
-            <!-- Departure Airport / Not Implemented -->
             <label for="departureAirport">Departure Airport:</label>
             <input type="text" id="departureAirport" name="departureAirport" required>
 
-            <!-- Geography Section / Not Implemented -->
             <label for="departureCityCode">Departure City Code:</label>
-            <input type="text" id="departureCityCode" name="departureCityCode" maxlength="3" required>
+            <input type="text" id="departureCityCode" name="departureCityCode" required>
 
-            <!-- Route Section / Not Implemented -->
             <label for="fullRouting">Full Routing:</label>
-            <input type="text" id="fullRouting" name="fullRouting" maxlength="12" required>
+            <input type="text" id="fullRouting" name="fullRouting" required>
 
-            <!-- Equipment Section / Not Implemented -->
             <label for="generalEquipmentType">General Equipment Type:</label>
-            <input type="text" id="generalEquipmentType" name="generalEquipmentType" maxlength="3" required>
+            <input type="text" id="generalEquipmentType" name="generalEquipmentType" required>
 
-            <!-- Supplementary Section / Not Implemented -->
             <label for="elapsedJourneyTime">Elapsed Journey Time:</label>
-            <input type="text" id="elapsedJourneyTime" name="elapsedJourneyTime" maxlength="5" required>
+            <input type="text" id="elapsedJourneyTime" name="elapsedJourneyTime" required>
 
-            <!-- Metadata Section / Not Implemented -->
             <label for="scheduleFingerprint">Schedule Fingerprint:</label>
-            <input type="text" id="scheduleFingerprint" name="scheduleFingerprint" maxlength="64" required>
+            <input type="text" id="scheduleFingerprint" name="scheduleFingerprint" required>
 
-            <!-- Capacity Section / Not Implemented -->
             <label for="passengerClasses">Passenger Classes:</label>
-            <input type="text" id="passengerClasses" name="passengerClasses" maxlength="52" required>
+            <input type="text" id="passengerClasses" name="passengerClasses" required>
 
             <button type="submit">Predict</button>
         </form>
