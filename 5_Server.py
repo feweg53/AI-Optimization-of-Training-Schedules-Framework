@@ -1,11 +1,13 @@
 # 5_Server.py
 
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pandas as pd
 import joblib
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Load the model. Ensure this is the correct model file.
 model = joblib.load('optimized_random_forest_model.pkl')  
