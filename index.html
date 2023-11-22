@@ -88,7 +88,7 @@
                 <label for="crewOnStandby">Crew on Standby:</label>
                 <input type="number" id="crewOnStandby" name="crewOnStandby" min="1" max="10" required>
             </div>
-            
+
             <div class="row">
                 <label for="aircraftType">Aircraft Type (e.g., A320):</label>
                 <input type="text" id="aircraftType" name="aircraftType" pattern="^[A-Z0-9]{2,4}$" required title="Enter a valid aircraft type (e.g., A320)">
@@ -143,5 +143,11 @@
     </div>
 
     <script src="script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <div id="chartContainer" style="width: 75%; margin: 20px auto;">
+        <canvas id="predictionChart"></canvas>
+    </div>
+
 </body>
 </html>
