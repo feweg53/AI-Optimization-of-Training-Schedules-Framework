@@ -42,3 +42,7 @@ your_dataset.csv:
 
 Note:
 For full functionality, ensure that all dependencies are installed and that the necessary datasets are available. The project is well-documented through logging, facilitating error tracking and understanding of each script's execution. 
+
+Build and Run Docker
+- `docker build -t ai-training-schedule-optimization .`
+- `docker run -p 4000:5000 ai-training-schedule-optimization`
