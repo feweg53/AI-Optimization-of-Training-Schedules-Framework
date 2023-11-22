@@ -43,3 +43,24 @@ document.getElementById("predictionForm").addEventListener("submit", function(ev
     });
 });
 
+function renderChart(data) {
+    const ctx = document.getElementById('predictionChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        // The type of chart: e.g., 'bar', 'line', etc.
+        type: 'bar',
+
+        // The data for this dataset
+        data: {
+            labels: ['Prediction'],
+            datasets: [{
+                label: 'Flight Delay (minutes)',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [data.prediction] // assuming 'data.prediction' is a numerical value
+            }]
+        },
+
+        // Configuration options
+        options: {}
+    });
+}
