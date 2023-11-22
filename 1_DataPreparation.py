@@ -31,6 +31,12 @@ def preprocess_data(data):
     :return: Preprocessed DataFrame.
     """
     data.fillna(method='ffill', inplace=True)
+    
+    # Convert time columns to datetime format
+    time_cols = ['scheduled_departure_time', 'scheduled_arrival_time', 'departure_time', 'arrival_time']
+    for col in time_cols:
+        data[col] = pd.to_datetime(data[col])
+        
     data['scheduled_departure_time'] = pd.to_datetime(data['scheduled_departure_time'])
     data['scheduled_arrival_time'] = pd.to_datetime(data['scheduled_arrival_time'])
     data['departure_hour'] = data['scheduled_departure_time'].dt.hour
@@ -47,7 +53,7 @@ def handle_uncertainties(data):
     """
     # Example: Adjust flight times based on weather conditions
     # Assuming there's a 'weather_condition' column and it affects flight duration
-    # You can adjust this logic based on your specific data and requirements
+    # Can adjust this logic based on your specific data and requirements
 
     # Define a simple mapping of weather conditions to delay factor
     weather_delay_factor = {
@@ -103,8 +109,8 @@ if __name__ == "__main__":
         data = handle_uncertainties(data)
 
         # Encoding and scaling
-        categorical_columns = ['weather_conditions']
-        numerical_columns = ['departure_hour', 'arrival_hour', 'other_numerical_column']
+        categorical_columns = ['weather_condition', 'aircraft_type', 'destination_airport', 'departure_airport']
+        numerical_columns = ['scheduled_departure_hour', 'scheduled_arrival_hour', 'actual_departure_hour', 'actual_arrival_hour', 'crew_on_standby', 'flight_duration', 'adjusted_flight_duration']
         data = encode_and_scale(data, categorical_columns, numerical_columns)
         logging.info("Encoding and scaling of data completed.")
 
@@ -123,3 +129,4 @@ if __name__ == "__main__":
 
     except Exception as e:
         logging.error(f"An error occurred during the main execution: {e}")
+
