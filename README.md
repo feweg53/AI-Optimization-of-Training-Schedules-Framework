@@ -67,7 +67,3 @@ See the `LICENSE.md` file for details.
 
 ## Contact
 For any queries, please contact user "feweg53" on Github or email 2015workac@gmail.com.
-
----
-
-*Note: This README.md is a template and should be modified to suit your project's specific requirements.*
