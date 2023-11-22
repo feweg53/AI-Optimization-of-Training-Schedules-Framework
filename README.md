@@ -1,11 +1,6 @@
 # AI-Optimization-of-Training-Schedules-Framework
-
-# The impleted fields are Departure Time, Crew on Standby, Aircraft Type, and Destination Airport.
-
-
-AI-Optimization-of-Training-Schedules-Framework
 Overview:
-The "AI-Optimization-of-Training-Schedules-Framework" is a comprehensive project aimed at enhancing the efficiency of flight training schedules through the application of artificial intelligence (AI). The project is structured into several Python scripts, each fulfilling a specific role in the data preparation, model selection, training, testing, and real-time data processing phases.
+This is a comprehensive project aimed at enhancing the efficiency of flight training schedules through the application of artificial intelligence (AI). The project is structured into several Python scripts, each fulfilling a specific role in the data preparation, model selection, training, testing, and real-time data processing phases.
 
 1_DataPreparation.py:
 This script focuses on preparing the training data for the AI model. It includes functions for loading, cleaning, and preprocessing the flight schedule data. It addresses uncertainties such as variable flight times and changing conditions, adjusting the dataset accordingly. The script also handles categorical variable encoding, numerical column scaling, and finally, splits the data into training and testing sets.
