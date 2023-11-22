@@ -7,6 +7,7 @@ import numpy as np
 import time
 import requests  # If integrating with an external scheduling system
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 
 # Configure logging
 logging.basicConfig(filename='ai_scheduling.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
@@ -105,7 +106,7 @@ def evaluate_model_during_training(model, X_val, y_val):
 def train_and_evaluate_model(model, X_train, y_train, X_val, y_val):
     # Training with periodic evaluation
     model.fit(X_train, y_train.values.ravel())
-    evaluate_model_during_training(model, X_val, y_val)
+    return evaluate_model_during_training(model, X_val, y_val)
 
 def integrate_with_scheduling_system(model, X_data, scheduling_system_api):
     """
@@ -167,12 +168,16 @@ def continuous_learning(model, new_data_stream, retrain_interval):
 if __name__ == "__main__":
     try:
         # Load data and split for validation
-        X_train, y_train, model = load_data_and_model('X_train.csv', 'y_train.csv', 'decision_tree_model.pkl')
-        # Existing code for loading model and data
+        X_train, y_train, model = load_data_and_model('X_train.csv', 'y_train.csv', 'optimized_random_forest_model.pkl')
+        X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
+        
         X_train, y_train = simulate_scenarios(X_train, y_train)
+        
         if X_train is not None and y_train is not None:
-            model = train_model(model, X_train, y_train)
-            # Save the model based on improved performance criteria
-            save_trained_model(model, 'trained_decision_tree_model.pkl')
+            validation_accuracy = train_and_evaluate_model(model, X_train, y_train, X_val, y_val)
+            logging.info(f"Validation accuracy: {validation_accuracy}")
+
+            if validation_accuracy > 0.8: # Threshold can be adjusted
+                save_trained_model(model, 'trained_optimized_random_forest_model.pkl')
     except Exception as e:
         logging.error(f"An error occurred in the training script: {e}")
