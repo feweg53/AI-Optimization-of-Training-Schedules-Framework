@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {
         data: {
             labels: sampleLabels,
             datasets: [{
-                label: 'Bar Dataset',
+                label: 'Delayed Time (minute)',
                 data: sampleData,
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgba(54, 162, 235, 1)',
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
         data: {
             labels: sampleLabels,
             datasets: [{
-                label: 'Line Dataset',
+                label: 'Delayed Time (minute)',
                 data: sampleData,
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                 borderColor: 'rgba(255, 99, 132, 1)',
@@ -100,9 +100,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const pieChart = new Chart(pieCtx, {
         type: 'pie',
         data: {
-            labels: ['Early', 'On Time', 'Late'],
+            labels: ['Late', 'Very Late', 'Extremely Late'],
             datasets: [{
-                label: 'Pie Dataset',
+                label: 'Delayed Time (minute)',
                 data: pieData,
                 backgroundColor: ['rgba(75, 192, 192, 0.5)', 'rgba(255, 205, 86, 0.5)', 'rgba(255, 99, 132, 0.5)'],
                 borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 205, 86, 1)', 'rgba(255, 99, 132, 1)'],
@@ -114,4 +114,6 @@ document.addEventListener("DOMContentLoaded", function() {
             maintainAspectRatio: false
         }
     });
+});
+
 });
