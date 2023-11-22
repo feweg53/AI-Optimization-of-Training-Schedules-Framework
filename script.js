@@ -43,24 +43,34 @@ document.getElementById("predictionForm").addEventListener("submit", function(ev
     });
 });
 
-function renderChart(data) {
+document.addEventListener("DOMContentLoaded", function() {
     const ctx = document.getElementById('predictionChart').getContext('2d');
-    const chart = new Chart(ctx, {
-        // The type of chart: e.g., 'bar', 'line', etc.
+    const predictionChart = new Chart(ctx, {
         type: 'bar',
-
-        // The data for this dataset
         data: {
-            labels: ['Prediction'],
+            labels: ['Flight 1', 'Flight 2', 'Flight 3'], // Replace with dynamic labels
             datasets: [{
-                label: 'Flight Delay (minutes)',
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgb(255, 99, 132)',
-                data: [data.prediction] // assuming 'data.prediction' is a numerical value
+                label: 'Predicted Delay in Minutes',
+                data: [12, 19, 3], // Replace with dynamic data
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
             }]
         },
-
-        // Configuration options
-        options: {}
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
     });
-}
+});
